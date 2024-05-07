@@ -1,22 +1,38 @@
-import React from "react";
-import ShoppingList from "./ShoppingList";
-import itemData from "../data/items";
+import React, { useState } from "react";
+import Item from "./Item";
 
-function App() {
+function ShoppingList({ items }) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // replace 'false' with a state variable that can be toggled between true and false
-  // this will be used for the Dark Mode Toggle feature
-  const appClass = false ? "App dark" : "App light"
+  function handleCategoryChange(event) {
+    // event.target.value will be the value selected by the user
+    setSelectedCategory(event.target.value);
+  }
+
+  // we want to filter the items to only display the ones based on the selected category
+  const itemsToDisplay = items.filter((item) => {
+    if (selectedCategory === "All") return true;
+
+    return item.category === selectedCategory;
+  });
 
   return (
-    <div className={appClass}>
-      <header>
-        <h2>Shopster</h2>
-        <button>Dark Mode</button>
-      </header>
-      <ShoppingList items={itemData} />
+    <div className="ShoppingList">
+      <div className="Filter">
+        <select name="filter" onChange={handleCategoryChange}>
+          <option value="All">Filter by category</option>
+          <option value="Produce">Produce</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Dessert">Dessert</option>
+        </select>
+      </div>
+      <ul className="Items">
+        {itemsToDisplay.map((item) => (
+          <Item key={item.id} name={item.name} category={item.category} />
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+export default ShoppingList;
